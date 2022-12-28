@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>cookie</title>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>
+    function setCookie(c_name,value,expiredays){
+      // pathの指定
+      var path = location.pathname;
+      // pathをフォルダ毎に指定する場合のIE対策
+      var paths = new Array();
+      paths = path.split("/");
+      if(paths[paths.length-1] != ""){
+        paths[paths.length-1] = "";
+        path = paths.join("/");
+      }
+      // 有効期限の日付
+      var extime = new Date().getTime();
+      var cltime = new Date(extime + (60*60*24*1000*expiredays));
+      var exdate = cltime.toUTCString();
+      // クッキーに保存する文字列を生成
+      var s="";
+      s += c_name +"="+ escape(value);// 値はエンコードしておく
+      s += "; path="+ path;
+      if(expiredays){
+        s += "; expires=" +exdate+"; ";
+      }else{
+        s += "; ";
+      }
+      // クッキーに保存
+      document.cookie=s;
+
+      $("#mode").text(getCookie(c_name));
+    }
+
+    // クッキーの値を取得 getCookie(クッキー名); //
+    function getCookie(c_name){
+      var st="";
+      var ed="";
+      if(document.cookie.length>0){
+        // クッキーの値を取り出す
+        st=document.cookie.indexOf(c_name + "=");
+        if(st!=-1){
+          st=st+c_name.length+1;
+          ed=document.cookie.indexOf(";",st);
+          if(ed==-1) ed=document.cookie.length;
+          // 値をデコードして返す
+          return unescape(document.cookie.substring(st,ed));
+        }
+      }
+      return "";
+    }
+
+  </script>
+</head>
+<body>
+  <a href="#" onClick="setCookie('mode', '1', '1');">set cookie [mode=1]</a><br />
+  <a href="#" onClick="setCookie('mode', '2', '1');">set cookie [mode=2]</a><br />
+  <a href="#" onClick="setCookie('mode', '0', '0');">delete cookie [mode]</a>
+  <br /><br />
+  [mode=<span id="mode">クッキーの値</span>]
+</body>
+</html>
